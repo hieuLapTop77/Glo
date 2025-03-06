@@ -1,5 +1,5 @@
 from airflow.decorators import dag, task
-from airflow.sensors.external_task import ExternalTaskSensor
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.utils.dates import days_ago
 from common.helper import call_procedure
 
@@ -19,12 +19,11 @@ default_args = {
     max_active_runs=1
 )
 def Subscription_Status():
-    Dim_Glo_Subscription_Id = ExternalTaskSensor(
-        task_id="wait_for_Dim_Glo_Subscription_Id",
-        external_dag_id="Dim_Glo_Subscription_Id",
-        external_task_id=None,
-        mode="poke",
-        timeout=600,
+
+    Dim_Glo_Subscription_Id = TriggerDagRunOperator(
+        task_id="trigger_Dim_Glo_Subscription_Id",
+        trigger_dag_id="Dim_Glo_Subscription_Id",
+        wait_for_completion=True
     )
 
     @task

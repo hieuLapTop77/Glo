@@ -1,5 +1,5 @@
 from airflow.decorators import dag, task
-from airflow.sensors.external_task import ExternalTaskSensor
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.utils.dates import days_ago
 from common.helper import call_procedure
 
@@ -19,12 +19,11 @@ default_args = {
     max_active_runs=1
 )
 def Last_Value_Union():
-    Stripe_Status_Qa_Suite = ExternalTaskSensor(
-        task_id="wait_for_Stripe_Status_Qa_Suite",
-        external_dag_id="Stripe_Status_Qa_Suite",
-        external_task_id=None,
-        mode="poke",
-        timeout=600,
+
+    Stripe_Status_Qa_Suite = TriggerDagRunOperator(
+        task_id="trigger_Stripe_Status_Qa_Suite",
+        trigger_dag_id="Stripe_Status_Qa_Suite",
+        wait_for_completion=True
     )
 
     @task

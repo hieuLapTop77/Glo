@@ -1,5 +1,5 @@
 from airflow.decorators import dag, task
-from airflow.sensors.external_task import ExternalTaskSensor
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.utils.dates import days_ago
 from common.helper import call_procedure
 
@@ -19,12 +19,11 @@ default_args = {
     max_active_runs=1
 )
 def Dm_Rolling_Thirty_Day_Churn_Rate():
-    Dm_Churn_Rate_Segmentation = ExternalTaskSensor(
-        task_id="wait_for_Dm_Churn_Rate_Segmentation",
-        external_dag_id="Dm_Churn_Rate_Segmentation",
-        external_task_id=None,
-        mode="poke",
-        timeout=600,
+
+    Dm_Churn_Rate_Segmentation = TriggerDagRunOperator(
+        task_id="trigger_Dm_Churn_Rate_Segmentations",
+        trigger_dag_id="Dm_Churn_Rate_Segmentation",
+        wait_for_completion=True
     )
 
     @task

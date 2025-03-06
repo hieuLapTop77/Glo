@@ -1,5 +1,5 @@
 from airflow.decorators import dag, task
-from airflow.sensors.external_task import ExternalTaskSensor
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.utils.dates import days_ago
 from common.helper import call_procedure
 
@@ -20,12 +20,10 @@ default_args = {
 )
 def Stripe_Free_Time_Status():
 
-    Stripe_Active_Without_Invoice_Status = ExternalTaskSensor(
-        task_id="wait_for_Stripe_Active_Without_Invoice_Status",
-        external_dag_id="Stripe_Active_Without_Invoice_Status",
-        external_task_id=None,
-        mode="poke",
-        timeout=600,
+    Stripe_Active_Without_Invoice_Status = TriggerDagRunOperator(
+        task_id="trigger_Stripe_Active_Without_Invoice_Status",
+        trigger_dag_id="Stripe_Active_Without_Invoice_Status",
+        wait_for_completion=True
     )
 
     @task

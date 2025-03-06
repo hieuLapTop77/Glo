@@ -1,5 +1,5 @@
 from airflow.decorators import dag, task
-from airflow.sensors.external_task import ExternalTaskSensor
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.utils.dates import days_ago
 from common.helper import call_procedure
 
@@ -19,12 +19,11 @@ default_args = {
     max_active_runs=1
 )
 def Dm_Agg_Subscription_Status_Counts_by_Day():
-    Last_Value_Union = ExternalTaskSensor(
-        task_id="wait_for_Last_Value_Union",
-        external_dag_id="Last_Value_Union",
-        external_task_id=None,
-        mode="poke",
-        timeout=600,
+
+    Last_Value_Union = TriggerDagRunOperator(
+        task_id="trigger_Last_Value_Union",
+        trigger_dag_id="Last_Value_Union",
+        wait_for_completion=True
     )
 
     @task

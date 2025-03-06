@@ -1,5 +1,5 @@
 from airflow.decorators import dag, task
-from airflow.sensors.external_task import ExternalTaskSensor
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.utils.dates import days_ago
 from common.helper import call_procedure
 
@@ -19,12 +19,11 @@ default_args = {
     max_active_runs=1
 )
 def Stripe_Trialing_Status():
-    Stg_Consolidated_Stripe_Data = ExternalTaskSensor(
-        task_id="wait_for_Stg_Consolidated_Stripe_Data",
-        external_dag_id="Stg_Consolidated_Stripe_Data",
-        external_task_id=None,
-        mode="poke",
-        timeout=600,
+
+    Stg_Consolidated_Stripe_Data = TriggerDagRunOperator(
+        task_id="trigger_Stg_Consolidated_Stripe_Data",
+        trigger_dag_id="Stg_Consolidated_Stripe_Data",
+        wait_for_completion=True
     )
 
     @task

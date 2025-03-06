@@ -1,5 +1,5 @@
 from airflow.decorators import dag, task
-from airflow.sensors.external_task import ExternalTaskSensor
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.utils.dates import days_ago
 from common.helper import call_procedure
 
@@ -19,12 +19,11 @@ default_args = {
     max_active_runs=1
 )
 def Dm_Engagement_Month_Dashboard():
-    Dm_Twelve_Month_Revenue_Capture_Pct = ExternalTaskSensor(
-        task_id="wait_for_Dm_Twelve_Month_Revenue_Capture_Pct",
-        external_dag_id="Dm_Twelve_Month_Revenue_Capture_Pct",
-        external_task_id=None,
-        mode="poke",
-        timeout=600,
+
+    Dm_Twelve_Month_Revenue_Capture_Pct = TriggerDagRunOperator(
+        task_id="trigger_Dm_Twelve_Month_Revenue_Capture_Pct",
+        trigger_dag_id="Dm_Twelve_Month_Revenue_Capture_Pct",
+        wait_for_completion=True
     )
 
     @task

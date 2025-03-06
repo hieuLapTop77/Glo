@@ -1,5 +1,5 @@
 from airflow.decorators import dag, task
-from airflow.sensors.external_task import ExternalTaskSensor
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.utils.dates import days_ago
 from common.helper import call_procedure
 
@@ -12,19 +12,18 @@ default_args = {
 
 @dag(
     default_args=default_args,
-    schedule_interval=None,
+    schedule_interval="0 16 * * *",
     start_date=days_ago(1),
     catchup=False,
     tags=["Dm Marketing User Summary", "redshift"],
     max_active_runs=1
 )
 def Dm_Marketing_User_Summary():
-    Stg_Subscription_Subscriber_Transitions = ExternalTaskSensor(
-        task_id="wait_for_Stg_Subscription_Subscriber_Transitions",
-        external_dag_id="Stg_Subscription_Subscriber_Transitions",
-        external_task_id=None,
-        mode="poke",
-        timeout=600,
+
+    Stg_Subscription_Subscriber_Transitions = TriggerDagRunOperator(
+        task_id="trigger_Stg_Subscription_Subscriber_Transitions",
+        trigger_dag_id="Stg_Subscription_Subscriber_Transitions",
+        wait_for_completion=True
     )
 
     @task

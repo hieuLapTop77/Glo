@@ -1,5 +1,5 @@
 from airflow.decorators import dag, task
-from airflow.sensors.external_task import ExternalTaskSensor
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.utils.dates import days_ago
 from common.helper import call_procedure
 
@@ -19,12 +19,11 @@ default_args = {
     max_active_runs=1
 )
 def Dm_Rolling_Thirty_Day_Trial_Conversion_Rate():
-    Dm_Rolling_Thirty_Day_Churn_Rate = ExternalTaskSensor(
-        task_id="wait_for_Dm_Rolling_Thirty_Day_Churn_Rate",
-        external_dag_id="Dm_Rolling_Thirty_Day_Churn_Rate",
-        external_task_id=None,
-        mode="poke",
-        timeout=600,
+
+    Dm_Rolling_Thirty_Day_Churn_Rate = TriggerDagRunOperator(
+        task_id="trigger_Dm_Rolling_Thirty_Day_Churn_Rate",
+        trigger_dag_id="Dm_Rolling_Thirty_Day_Churn_Rate",
+        wait_for_completion=True
     )
 
     @task

@@ -1,5 +1,5 @@
 from airflow.decorators import dag, task
-from airflow.sensors.external_task import ExternalTaskSensor
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.utils.dates import days_ago
 from common.helper import call_procedure
 
@@ -19,12 +19,10 @@ default_args = {
     max_active_runs=1
 )
 def Dm_Apple_Daily_Summary():
-    Apple_User_Paid_Months = ExternalTaskSensor(
-        task_id="wait_for_Apple_User_Paid_Months",
-        external_dag_id="Apple_User_Paid_Months",
-        external_task_id=None,
-        mode="poke",
-        timeout=600,
+    Apple_User_Paid_Months = TriggerDagRunOperator(
+        task_id="trigger_Apple_User_Paid_Months",
+        trigger_dag_id="Apple_User_Paid_Months",
+        wait_for_completion=True
     )
 
     @task

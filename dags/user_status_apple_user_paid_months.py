@@ -1,5 +1,5 @@
 from airflow.decorators import dag, task
-from airflow.sensors.external_task import ExternalTaskSensor
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.utils.dates import days_ago
 from common.helper import call_procedure
 
@@ -19,13 +19,6 @@ default_args = {
     max_active_runs=1
 )
 def Apple_User_Paid_Months():
-    Apple_Event_History = ExternalTaskSensor(
-        task_id="wait_for_Apple_Event_History",
-        external_dag_id="Apple_Event_History",
-        external_task_id=None,
-        mode="poke",
-        timeout=600,
-    )
 
     @task
     def call_apple_user_paid_months():
@@ -33,6 +26,11 @@ def Apple_User_Paid_Months():
         proc_name = "analytics.glue_load_apple_user_paid_months()"
         call_procedure(proc_name=proc_name)
 
+    Apple_Event_History = TriggerDagRunOperator(
+        task_id="trigger_Apple_Event_History",
+        trigger_dag_id="Apple_Event_History",
+        wait_for_completion=True
+    )
     ###############################
     Apple_Event_History >> call_apple_user_paid_months()
 

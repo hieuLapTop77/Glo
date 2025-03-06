@@ -11,7 +11,7 @@ default_args = {
 
 @dag(
     default_args=default_args,
-    schedule_interval="0 16 * * *",
+    schedule_interval=None,
     start_date=days_ago(1),
     catchup=False,
     tags=["Stg Consolidated Stripe Data", "redshift"],
