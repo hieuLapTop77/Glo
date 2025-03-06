@@ -13,5 +13,5 @@ def call_procedure(proc_name: str):
     end_time = time.time()
     print(
         f"Query execution time takes about {end_time - start_time} seconds")
-    cursor.commit()
+    connection.commit()
     cursor.close()
