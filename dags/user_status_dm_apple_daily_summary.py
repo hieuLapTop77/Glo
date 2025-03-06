@@ -1,5 +1,4 @@
 from airflow.decorators import dag, task
-from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.utils.dates import days_ago
 from common.helper import call_procedure
 
@@ -19,11 +18,6 @@ default_args = {
     max_active_runs=1
 )
 def Dm_Apple_Daily_Summary():
-    Apple_User_Paid_Months = TriggerDagRunOperator(
-        task_id="trigger_Apple_User_Paid_Months",
-        trigger_dag_id="Apple_User_Paid_Months",
-        wait_for_completion=True
-    )
 
     @task
     def call_dm_apple_daily_summary():
@@ -32,7 +26,7 @@ def Dm_Apple_Daily_Summary():
         call_procedure(proc_name=proc_name)
 
     ###############################
-    Apple_User_Paid_Months >> call_dm_apple_daily_summary()
+    call_dm_apple_daily_summary()
 
 
 dag = Dm_Apple_Daily_Summary()

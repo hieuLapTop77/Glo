@@ -1,5 +1,4 @@
 from airflow.decorators import dag, task
-from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.utils.dates import days_ago
 from common.helper import call_procedure
 
@@ -20,12 +19,6 @@ default_args = {
 )
 def Stripe_Trialing_Status():
 
-    Stg_Consolidated_Stripe_Data = TriggerDagRunOperator(
-        task_id="trigger_Stg_Consolidated_Stripe_Data",
-        trigger_dag_id="Stg_Consolidated_Stripe_Data",
-        wait_for_completion=True
-    )
-
     @task
     def call_stripe_trialing_status():
         print("Calling stripe_trialing_status")
@@ -33,7 +26,7 @@ def Stripe_Trialing_Status():
         call_procedure(proc_name=proc_name)
 
     ###############################
-    Stg_Consolidated_Stripe_Data >> call_stripe_trialing_status()
+    call_stripe_trialing_status()
 
 
 dag = Stripe_Trialing_Status()

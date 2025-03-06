@@ -1,5 +1,4 @@
 from airflow.decorators import dag, task
-from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.utils.dates import days_ago
 from common.helper import call_procedure
 
@@ -20,12 +19,6 @@ default_args = {
 )
 def Stripe_Status_Qa_Suite():
 
-    Subscription_Status = TriggerDagRunOperator(
-        task_id="trigger_Subscription_Status",
-        trigger_dag_id="Subscription_Status",
-        wait_for_completion=True
-    )
-
     @task
     def call_stripe_status_qa_suite():
         print("Calling stripe_status_qa_suite")
@@ -33,7 +26,7 @@ def Stripe_Status_Qa_Suite():
         call_procedure(proc_name=proc_name)
 
     ###############################
-    Subscription_Status >> call_stripe_status_qa_suite()
+    call_stripe_status_qa_suite()
 
 
 dag = Stripe_Status_Qa_Suite()

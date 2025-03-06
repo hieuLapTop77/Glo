@@ -1,5 +1,4 @@
 from airflow.decorators import dag, task
-from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.utils.dates import days_ago
 from common.helper import call_procedure
 
@@ -20,12 +19,6 @@ default_args = {
 )
 def Stg_Subscription_Subscriber_Transitions():
 
-    Stg_Mrr_Dashboard = TriggerDagRunOperator(
-        task_id="trigger_Stg_Mrr_Dashboard",
-        trigger_dag_id="Stg_Mrr_Dashboard",
-        wait_for_completion=True
-    )
-
     @task
     def call_stg_subscription_subscriber_transitions():
         print("Calling stg_subscription_subscriber_transitions")
@@ -33,7 +26,7 @@ def Stg_Subscription_Subscriber_Transitions():
         call_procedure(proc_name=proc_name)
 
     ###############################
-    Stg_Mrr_Dashboard >> call_stg_subscription_subscriber_transitions()
+    call_stg_subscription_subscriber_transitions()
 
 
 dag = Stg_Subscription_Subscriber_Transitions()

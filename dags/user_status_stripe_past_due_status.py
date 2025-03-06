@@ -1,5 +1,4 @@
 from airflow.decorators import dag, task
-from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.utils.dates import days_ago
 from common.helper import call_procedure
 
@@ -20,12 +19,6 @@ default_args = {
 )
 def Stripe_Past_Due_Status():
 
-    Stripe_on_Hold_Status = TriggerDagRunOperator(
-        task_id="trigger_Stripe_on_Hold_Status",
-        trigger_dag_id="Stripe_on_Hold_Status",
-        wait_for_completion=True
-    )
-
     @task
     def call_stripe_past_due_status():
         print("Calling stripe_past_due_status")
@@ -33,7 +26,7 @@ def Stripe_Past_Due_Status():
         call_procedure(proc_name=proc_name)
 
     ###############################
-    Stripe_on_Hold_Status >> call_stripe_past_due_status()
+    call_stripe_past_due_status()
 
 
 dag = Stripe_Past_Due_Status()

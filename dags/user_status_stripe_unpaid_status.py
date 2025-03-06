@@ -1,5 +1,4 @@
 from airflow.decorators import dag, task
-from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.utils.dates import days_ago
 from common.helper import call_procedure
 
@@ -20,12 +19,6 @@ default_args = {
 )
 def Stripe_Unpaid_Status():
 
-    Stripe_Canceled_Status = TriggerDagRunOperator(
-        task_id="trigger_Stripe_Canceled_Status",
-        trigger_dag_id="Stripe_Canceled_Status",
-        wait_for_completion=True
-    )
-
     @task
     def call_stripe_unpaid_status():
         print("Calling stripe_unpaid_status")
@@ -33,7 +26,7 @@ def Stripe_Unpaid_Status():
         call_procedure(proc_name=proc_name)
 
     ###############################
-    Stripe_Canceled_Status >> call_stripe_unpaid_status()
+    call_stripe_unpaid_status()
 
 
 dag = Stripe_Unpaid_Status()

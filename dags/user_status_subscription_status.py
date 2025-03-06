@@ -1,5 +1,4 @@
 from airflow.decorators import dag, task
-from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.utils.dates import days_ago
 from common.helper import call_procedure
 
@@ -20,12 +19,6 @@ default_args = {
 )
 def Subscription_Status():
 
-    Dim_Glo_Subscription_Id = TriggerDagRunOperator(
-        task_id="trigger_Dim_Glo_Subscription_Id",
-        trigger_dag_id="Dim_Glo_Subscription_Id",
-        wait_for_completion=True
-    )
-
     @task
     def call_subscription_status():
         print("Calling subscription_status")
@@ -33,7 +26,7 @@ def Subscription_Status():
         call_procedure(proc_name=proc_name)
 
     ###############################
-    Dim_Glo_Subscription_Id >> call_subscription_status()
+    call_subscription_status()
 
 
 dag = Subscription_Status()

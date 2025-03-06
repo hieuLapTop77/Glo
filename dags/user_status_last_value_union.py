@@ -1,5 +1,4 @@
 from airflow.decorators import dag, task
-from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.utils.dates import days_ago
 from common.helper import call_procedure
 
@@ -20,12 +19,6 @@ default_args = {
 )
 def Last_Value_Union():
 
-    Stripe_Status_Qa_Suite = TriggerDagRunOperator(
-        task_id="trigger_Stripe_Status_Qa_Suite",
-        trigger_dag_id="Stripe_Status_Qa_Suite",
-        wait_for_completion=True
-    )
-
     @task
     def call_last_value_union():
         print("Calling last_value_union")
@@ -33,7 +26,7 @@ def Last_Value_Union():
         call_procedure(proc_name=proc_name)
 
     ###############################
-    Stripe_Status_Qa_Suite >> call_last_value_union()
+    call_last_value_union()
 
 
 dag = Last_Value_Union()

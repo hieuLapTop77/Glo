@@ -1,5 +1,4 @@
 from airflow.decorators import dag, task
-from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.utils.dates import days_ago
 from common.helper import call_procedure
 
@@ -20,12 +19,6 @@ default_args = {
 )
 def Stg_Mrr_Dashboard():
 
-    Dm_Trial_Outcomes = TriggerDagRunOperator(
-        task_id="trigger_Dm_Trial_Outcomes",
-        trigger_dag_id="Dm_Trial_Outcomes",
-        wait_for_completion=True
-    )
-
     @task
     def call_stg_mrr_dashboard():
         print("Calling stg_mrr_dashboard")
@@ -33,7 +26,7 @@ def Stg_Mrr_Dashboard():
         call_procedure(proc_name=proc_name)
 
     ###############################
-    Dm_Trial_Outcomes >> call_stg_mrr_dashboard()
+    call_stg_mrr_dashboard()
 
 
 dag = Stg_Mrr_Dashboard()

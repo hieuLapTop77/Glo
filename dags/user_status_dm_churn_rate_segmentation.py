@@ -1,5 +1,4 @@
 from airflow.decorators import dag, task
-from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.utils.dates import days_ago
 from common.helper import call_procedure
 
@@ -20,12 +19,6 @@ default_args = {
 )
 def Dm_Churn_Rate_Segmentation():
 
-    Dm_Agg_Subscription_Status_Counts_by_Day = TriggerDagRunOperator(
-        task_id="trigger_Dm_Agg_Subscription_Status_Counts_by_Day",
-        trigger_dag_id="Dm_Agg_Subscription_Status_Counts_by_Day",
-        wait_for_completion=True
-    )
-
     @task
     def call_dm_churn_rate_segmentation():
         print("Calling dm_churn_rate_segmentation")
@@ -33,7 +26,7 @@ def Dm_Churn_Rate_Segmentation():
         call_procedure(proc_name=proc_name)
 
     ###############################
-    Dm_Agg_Subscription_Status_Counts_by_Day >> call_dm_churn_rate_segmentation()
+    call_dm_churn_rate_segmentation()
 
 
 dag = Dm_Churn_Rate_Segmentation()
